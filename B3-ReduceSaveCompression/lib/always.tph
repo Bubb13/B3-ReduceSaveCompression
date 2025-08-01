@@ -56,3 +56,26 @@ BEGIN
 		END
 	END
 END
+
+DEFINE_ACTION_FUNCTION PATCH_EXECUTABLE
+	INT_VAR
+		patch_adjust  = 0
+	STR_VAR
+		exe_name      = ~~
+		patch_pattern = ~~
+		patch_write   = ~~
+BEGIN
+	COPY ~%exe_name%~ ~%exe_name%~
+
+		LPF PARSE_HEX_STRING STR_VAR str = EVAL ~%patch_pattern%~ RET parsed_patch_pattern = result END
+		patch_address = INDEX_BUFFER (EXACT_MATCH ~%parsed_patch_pattern%~)
+
+		PATCH_IF patch_address == "-1" BEGIN
+			PATCH_FAIL ~Couldn't find patch_address~
+		END
+
+		LPF PARSE_HEX_STRING STR_VAR str = EVAL ~%patch_write%~ RET parsed_patch_write = result END
+		WRITE_EVALUATED_ASCII patch_address + patch_adjust ~%parsed_patch_write%~
+
+	BUT_ONLY
+END

@@ -11,78 +11,140 @@ END
 
 BEGIN ~Reduce Save Compression~ LABEL ~B3-ReduceSaveCompression-Main~
 REQUIRE_PREDICATE ~%WEIDU_OS%~ STRING_EQUAL ~win32~ OR ~%WEIDU_OS%~ STRING_EQUAL ~unix~ OR ~%WEIDU_OS%~ STRING_EQUAL ~osx~ ~OS not supported.~
-REQUIRE_PREDICATE GAME_IS ~bgee bg2ee eet iwdee~ ~Game not supported.~
+REQUIRE_PREDICATE GAME_IS ~bgee bg2ee eet iwdee pstee~ ~Game not supported.~
 
 	ACTION_IF ~%WEIDU_OS%~ STRING_EQUAL ~win32~ BEGIN
 
-		ACTION_IF GAME_IS ~bgee~ BEGIN
-			ACTION_IF FILE_EXISTS ~SiegeOfDragonspear.exe~ BEGIN
-				OUTER_SPRINT exe_name ~SiegeOfDragonspear.exe~
-			END ELSE BEGIN
-				OUTER_SPRINT exe_name ~Baldur.exe~
-			END
-		END ELSE ACTION_IF GAME_IS ~bg2ee eet~ BEGIN
-			OUTER_SPRINT exe_name ~Baldur.exe~
-		END ELSE ACTION_IF GAME_IS ~iwdee~ BEGIN
-			OUTER_SPRINT exe_name ~icewind.exe~
-		END ELSE BEGIN
-			FAIL ~exe_name not defined for game; (this should never happen).~
-		END
+		ACTION_IF GAME_IS ~bgee bg2ee eet iwdee~ BEGIN
 
-		OUTER_SPRINT patch_pattern ~4C 8B F0 C7 44 24 20 09 00 00 00~
-		OUTER_SET    patch_adjust = 7
-		OUTER_SPRINT patch_write   ~01 00 00 00~
+			ACTION_IF GAME_IS ~bgee~ BEGIN
+				ACTION_IF FILE_EXISTS ~SiegeOfDragonspear.exe~ BEGIN
+					OUTER_SPRINT exe_name ~SiegeOfDragonspear.exe~
+				END ELSE BEGIN
+					OUTER_SPRINT exe_name ~Baldur.exe~
+				END
+			END ELSE ACTION_IF GAME_IS ~bg2ee eet~ BEGIN
+				OUTER_SPRINT exe_name ~Baldur.exe~
+			END ELSE ACTION_IF GAME_IS ~iwdee~ BEGIN
+				OUTER_SPRINT exe_name ~icewind.exe~
+			END ELSE BEGIN
+				FAIL ~exe_name not defined for game; (this should never happen).~
+			END
+
+			LAF PATCH_EXECUTABLE
+				INT_VAR
+					patch_adjust  = 7
+				STR_VAR
+					exe_name      = EVAL ~%exe_name%~
+					patch_pattern = ~4C 8B F0 C7 44 24 20 09 00 00 00~
+					patch_write   = ~01 00 00 00~
+			END
+
+		END ELSE ACTION_IF GAME_IS ~pstee~ BEGIN
+
+			LAF PATCH_EXECUTABLE
+				INT_VAR
+					patch_adjust  = 1
+				STR_VAR
+					exe_name      = ~Torment.exe~
+					patch_pattern = ~6A 09 FF 75 F0~
+					patch_write   = ~01~
+			END
+
+		END ELSE BEGIN
+			FAIL ~game not handled; (this should never happen).~
+		END
 
 	END ELSE ACTION_IF ~%WEIDU_OS%~ STRING_EQUAL ~unix~ BEGIN
 
-		ACTION_IF GAME_IS ~bgee~ BEGIN
-			ACTION_IF FILE_EXISTS ~SiegeOfDragonspear~ BEGIN
-				OUTER_SPRINT exe_name ~SiegeOfDragonspear~
-			END ELSE BEGIN
-				OUTER_SPRINT exe_name ~BaldursGate~
-			END
-		END ELSE ACTION_IF GAME_IS ~bg2ee eet~ BEGIN
-			OUTER_SPRINT exe_name ~BaldursGateII~
-		END ELSE ACTION_IF GAME_IS ~iwdee~ BEGIN
-			OUTER_SPRINT exe_name ~IcewindDale~
-		END ELSE BEGIN
-			FAIL ~exe_name not defined for game; (this should never happen).~
-		END
+		ACTION_IF GAME_IS ~bgee bg2ee eet iwdee~ BEGIN
 
-		OUTER_SPRINT patch_pattern ~8B 4C 24 1C 41 B8 09 00 00 00~
-		OUTER_SET    patch_adjust = 6
-		OUTER_SPRINT patch_write   ~01 00 00 00~
+			ACTION_IF GAME_IS ~bgee~ BEGIN
+				ACTION_IF FILE_EXISTS ~SiegeOfDragonspear~ BEGIN
+					OUTER_SPRINT exe_name ~SiegeOfDragonspear~
+				END ELSE BEGIN
+					OUTER_SPRINT exe_name ~BaldursGate~
+				END
+			END ELSE ACTION_IF GAME_IS ~bg2ee eet~ BEGIN
+				OUTER_SPRINT exe_name ~BaldursGateII~
+			END ELSE ACTION_IF GAME_IS ~iwdee~ BEGIN
+				OUTER_SPRINT exe_name ~IcewindDale~
+			END ELSE BEGIN
+				FAIL ~exe_name not defined for game; (this should never happen).~
+			END
+
+			LAF PATCH_EXECUTABLE
+				INT_VAR
+					patch_adjust  = 6
+				STR_VAR
+					exe_name      = EVAL ~%exe_name%~
+					patch_pattern = ~8B 4C 24 1C 41 B8 09 00 00 00~
+					patch_write   = ~01 00 00 00~
+			END
+
+		END ELSE ACTION_IF GAME_IS ~pstee~ BEGIN
+
+			LAF PATCH_EXECUTABLE
+				INT_VAR
+					patch_adjust  = 4
+				STR_VAR
+					exe_name      = ~Torment~
+					patch_pattern = ~C7 44 24 10 09 00 00 00 89 44 24 2C~
+					patch_write   = ~01 00 00 00~
+			END
+
+			LAF PATCH_EXECUTABLE
+				INT_VAR
+					patch_adjust  = 10
+				STR_VAR
+					exe_name      = ~Torment64~
+					patch_pattern = ~48 8D B4 24 3C 01 00 00 41 B8 09 00 00 00~
+					patch_write   = ~01 00 00 00~
+			END
+
+		END ELSE BEGIN
+			FAIL ~game not handled; (this should never happen).~
+		END
 
 	END ELSE ACTION_IF ~%WEIDU_OS%~ STRING_EQUAL ~osx~ BEGIN
 
-		ACTION_IF GAME_IS ~bgee~ BEGIN
-			OUTER_SPRINT exe_name ~Baldur's Gate - Enhanced Edition.app/Contents/MacOS/BaldursGate-macOS~
-		END ELSE ACTION_IF GAME_IS ~bg2ee eet~ BEGIN
-			OUTER_SPRINT exe_name ~BaldursGateIIEnhancedEdition.app/Contents/MacOS/BaldursGate-macOS~
-		END ELSE ACTION_IF GAME_IS ~iwdee~ BEGIN
-			OUTER_SPRINT exe_name ~IcewindDale.app/Contents/MacOS/IcewindDale-macOS~
-		END ELSE BEGIN
-			FAIL ~exe_name not defined for game; (this should never happen).~
-		END
+		ACTION_IF GAME_IS ~bgee bg2ee eet iwdee~ BEGIN
 
-		OUTER_SPRINT patch_pattern ~48 8D 75 D4 41 B8 09 00 00 00~
-		OUTER_SET    patch_adjust = 6
-		OUTER_SPRINT patch_write   ~01 00 00 00~
+			ACTION_IF GAME_IS ~bgee~ BEGIN
+				OUTER_SPRINT exe_name ~Baldur's Gate - Enhanced Edition.app/Contents/MacOS/BaldursGate-macOS~
+			END ELSE ACTION_IF GAME_IS ~bg2ee eet~ BEGIN
+				OUTER_SPRINT exe_name ~BaldursGateIIEnhancedEdition.app/Contents/MacOS/BaldursGate-macOS~
+			END ELSE ACTION_IF GAME_IS ~iwdee~ BEGIN
+				OUTER_SPRINT exe_name ~IcewindDale.app/Contents/MacOS/IcewindDale-macOS~
+			END ELSE BEGIN
+				FAIL ~exe_name not defined for game; (this should never happen).~
+			END
+
+			LAF PATCH_EXECUTABLE
+				INT_VAR
+					patch_adjust  = 6
+				STR_VAR
+					exe_name      = EVAL ~%exe_name%~
+					patch_pattern = ~48 8D 75 D4 41 B8 09 00 00 00~
+					patch_write   = ~01 00 00 00~
+
+			END
+
+		END ELSE ACTION_IF GAME_IS ~pstee~ BEGIN
+
+			LAF PATCH_EXECUTABLE
+				INT_VAR
+					patch_adjust  = 8
+				STR_VAR
+					exe_name      = ~Planescape Torment - Enhanced Edition.app/Contents/MacOS/Planescape Torment - Enhanced Edition~
+					patch_pattern = ~8B 8D B8 FE FF FF 41 B8 09 00 00 00~
+					patch_write   = ~01 00 00 00~
+			END
+
+		END ELSE BEGIN
+			FAIL ~game not handled; (this should never happen).~
+		END
 
 	END ELSE BEGIN
 		FAIL ~OS not handled; (this should never happen).~
 	END
-
-	COPY ~%exe_name%~ ~%exe_name%~
-
-		LPF PARSE_HEX_STRING STR_VAR str = EVAL ~%patch_pattern%~ RET parsed_patch_pattern = result END
-		patch_address = INDEX_BUFFER (EXACT_MATCH ~%parsed_patch_pattern%~)
-
-		PATCH_IF patch_address == "-1" BEGIN
-			PATCH_FAIL ~Couldn't find patch_address~
-		END
-
-		LPF PARSE_HEX_STRING STR_VAR str = EVAL ~%patch_write%~ RET parsed_patch_write = result END
-		WRITE_EVALUATED_ASCII patch_address + patch_adjust ~%parsed_patch_write%~
-
-	BUT_ONLY
