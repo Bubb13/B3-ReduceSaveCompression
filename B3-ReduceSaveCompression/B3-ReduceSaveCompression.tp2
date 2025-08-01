@@ -1,6 +1,6 @@
 BACKUP ~weidu_external/B3-ReduceSaveCompression/backup~
 AUTHOR ~Bubb~
-VERSION ~v1.0~
+VERSION ~v1.1~
 
 ALWAYS
 	ACTION_IF !VARIABLE_IS_SET always BEGIN
