@@ -20,11 +20,12 @@ Reduce Save Compression lowers the compression level used by Beamdog's Enhanced 
 
 ### Supported Games
 
-| Game                                | Version       |
-| ----------------------------------- | ------------- |
-| Baldur's Gate: Enhanced Edition     | v2.6          |
-| Baldur's Gate II: Enhanced Edition  | v2.6          |
-| Icewind Dale: Enhanced Edition      | v2.6          |
+| Game                                 | Version       |
+| ------------------------------------ | ------------- |
+| Baldur's Gate: Enhanced Edition      | v2.6          |
+| Baldur's Gate II: Enhanced Edition   | v2.6          |
+| Icewind Dale: Enhanced Edition       | v2.6          |
+| Planescape Torment: Enhanced Edition | v3.1.4.0      |
 
 # Credits
 
